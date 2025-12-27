@@ -1,9 +1,13 @@
 package com.smartcontractor.controller;
 
 import com.smartcontractor.common.ApiResponse;
+import com.smartcontractor.mapper.EmployeeMapper;
+import com.smartcontractor.mapper.PaymentDetailsMapper;
 import com.smartcontractor.model.Company;
 import com.smartcontractor.model.Employee;
 import com.smartcontractor.model.PaymentDetails;
+import com.smartcontractor.model.mappermodel.EmployeeMap;
+import com.smartcontractor.model.mappermodel.PaymentDetailsMap;
 import com.smartcontractor.service.CompanyService;
 import com.smartcontractor.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +58,30 @@ public class EmployeeController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "Employee deletion failed", e.getMessage()), HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @PostMapping("/update")
+    public ResponseEntity<ApiResponse<?>> updateEmployee(
+            @RequestParam String employeeId,
+            @RequestBody Employee employee
+    ){
+
+        try {
+            Employee createdEmployee = employeeService.updateEmployee(employeeId, employee);
+
+            EmployeeMap employeeMap = EmployeeMapper.toEmployeeMap(createdEmployee);
+            employeeMap.setPaymentDetails(createdEmployee.getPaymentDetails());
+
+            return new ResponseEntity<>(ApiResponse.success(HttpStatus.CREATED.value(), "Employee Updated successfully", employeeMap), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            if ("User not found".equals(e.getMessage()) || "Company not found".equals(e.getMessage())) {
+                return new ResponseEntity<>(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "Employee Update failed", e.getMessage()), HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Employee Update failed", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+
     }
 
     @GetMapping("/get/employee")

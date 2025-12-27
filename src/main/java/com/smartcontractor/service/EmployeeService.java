@@ -12,4 +12,5 @@ public interface EmployeeService {
     List<Employee> getAllEmployees(String companyId);
     List<Employee> getAllEmployeesByCompany(String companyId);
 
+    Employee updateEmployee(String employeeId, Employee employee);
 }

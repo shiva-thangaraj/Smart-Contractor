@@ -94,6 +94,52 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findByCompanyId(companyId);
     }
 
+    @Override
+    public Employee updateEmployee(String employeeId, Employee employee) {
+
+        // check employee exist or not
+        if (!employeeRepository.existsById(employeeId)) {
+            throw new RuntimeException("Employee not found");
+        }
+
+        Employee updatedEmployee = employeeRepository.findById(employeeId).get();
+
+        updatedEmployee.setName(employee.getName());
+        updatedEmployee.setDesignation(employee.getDesignation());
+        updatedEmployee.setDepartment(employee.getDepartment());
+        updatedEmployee.setContactNumber(employee.getContactNumber());
+
+        if (employee.getPaymentDetails() != null) {
+
+            PaymentDetails paymentDetails = getPaymentDetails(employee, updatedEmployee);
+
+            updatedEmployee.setPaymentDetails(paymentDetails);
+        }
+
+
+        /*// Validate Company belongs to User
+        Company company = companyOpt.get();
+        if (!userId.equals(company.getUserId())) {
+            throw new RuntimeException("Company does not belong to the stipulated User");
+        }
+
+        // Set Company ID mapping
+        employee.setCompanyId(companyId);*/
+
+        return employeeRepository.save(updatedEmployee);
+    }
+
+    private static PaymentDetails getPaymentDetails(Employee employee, Employee updatedEmployee) {
+        PaymentDetails paymentDetails = updatedEmployee.getPaymentDetails();
+
+        paymentDetails.setPaymentCycle(employee.getPaymentDetails().getPaymentCycle());
+        paymentDetails.setSalary(employee.getPaymentDetails().getSalary());
+        paymentDetails.setCurrency(employee.getPaymentDetails().getCurrency());
+        paymentDetails.setBankAccount(employee.getPaymentDetails().getBankAccount());
+        paymentDetails.setHalfDaySalary(employee.getPaymentDetails().getHalfDaySalary());
+        return paymentDetails;
+    }
+
 
     private String generateEmployeeId() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
