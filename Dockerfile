@@ -12,8 +12,5 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Expose port (optional but good)
-EXPOSE 8080
-
 # Run the jar
 CMD ["java", "-jar", "target/*.jar"]
