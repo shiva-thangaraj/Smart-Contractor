@@ -1,21 +1,19 @@
-# Use Java 17
 FROM eclipse-temurin:17-jdk
 
-# Set working directory
 WORKDIR /app
 
-# Copy Maven files
+# Install Maven
+RUN apt-get update && apt-get install -y maven
+
+# Copy project files
 COPY pom.xml .
-COPY mvnw .
-
-# Download dependencies (faster builds)
-RUN ./mvnw dependency:go-offline
-
-# Copy source code
-COPY src src
+COPY src ./src
 
 # Build the application
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
-# Run the Spring Boot app
+# Expose port (optional but good)
+EXPOSE 8080
+
+# Run the jar
 CMD ["java", "-jar", "target/*.jar"]
