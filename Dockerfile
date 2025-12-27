@@ -13,4 +13,4 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Run the jar
-CMD ["java", "-jar", "target/*.jar"]
+CMD ["java", "-jar", "target/app.jar"]
