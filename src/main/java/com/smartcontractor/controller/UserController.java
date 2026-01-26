@@ -86,4 +86,31 @@ public class UserController {
             return new ResponseEntity<>(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "User fetch failed", e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @PostMapping("/update")
+    public ResponseEntity<ApiResponse<?>> updateUser(@RequestBody User user) {
+        try {
+            User updatedUser = userService.updateUser(user);
+            UserMap userMap = UserMapper.toLoginUserRes(updatedUser);
+            return new ResponseEntity<>(ApiResponse.success(HttpStatus.OK.value(), "User Updated successfully", userMap), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "User Updated failed", e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @GetMapping("/all/admin")
+    public ResponseEntity<ApiResponse<?>> getAllUsersForAdmin() {
+        List<User> users = userService.getAllUsers();
+        List<UserMap> userMapper = UserMapper.toLoginUserResList(users);
+        if (userMapper.isEmpty()) {
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK.value(), "Users fetched successfully", "No User has been Added till now"));
+        }
+        return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK.value(), "Users fetched successfully", userMapper));
+    }
+
+
+
+
 }
