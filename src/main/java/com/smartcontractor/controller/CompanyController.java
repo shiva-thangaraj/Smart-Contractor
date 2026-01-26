@@ -44,6 +44,24 @@ public class CompanyController {
     }
 
 
+    @PostMapping("/update")
+    public ResponseEntity<ApiResponse<?>> updateCompany(@RequestParam String userId, @RequestBody Company company) {
+
+        try {
+            Company createdCompany = companyService.createCompany(userId, company);
+
+            CompanyMap mapper = CompanyMapper.toCompanyMap(createdCompany);
+
+            return new ResponseEntity<>(ApiResponse.success(HttpStatus.CREATED.value(), "Company created successfully", mapper), HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            if ("User not found".equals(e.getMessage())) {
+                return new ResponseEntity<>(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "Company creation failed", "User not found"), HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Company creation failed", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @GetMapping("/getAllCompanys")
     public ResponseEntity<ApiResponse<?>> getCompanyAll(@RequestParam String userId) {
         try {

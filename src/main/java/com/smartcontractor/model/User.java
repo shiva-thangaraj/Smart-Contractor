@@ -15,7 +15,8 @@ import java.util.List;
 public class User {
     @Id
     private String userId;
-    
+    private String userName;
+    @Column(unique = true)
     private String userEmail;
     private String userPass;
     private String isUserActive;

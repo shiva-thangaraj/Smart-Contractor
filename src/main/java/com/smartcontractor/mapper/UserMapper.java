@@ -16,6 +16,7 @@ public class UserMapper {
 
         UserMap res = new UserMap();
         res.setUserId(user.getUserId());
+        res.setUserName(user.getUserName());
         res.setUserEmail(user.getUserEmail());
         res.setUserPass(user.getUserPass());
         res.setIsUserActive(user.getIsUserActive());

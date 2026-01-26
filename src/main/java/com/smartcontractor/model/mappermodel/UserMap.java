@@ -4,13 +4,21 @@ import jakarta.persistence.Id;
 
 public class UserMap {
 
-    @Id
     private String userId;
+    private String userName;
     private String userEmail;
     private String userPass;
     private String isUserActive;
     private String userCreatedAt;
     private String accessToken;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getUserId() {
         return userId;

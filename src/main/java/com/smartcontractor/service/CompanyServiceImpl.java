@@ -1,6 +1,7 @@
 package com.smartcontractor.service;
 
 import com.smartcontractor.model.Company;
+import com.smartcontractor.model.mappermodel.CompanyMap;
 import com.smartcontractor.repository.CompanyRepository;
 import com.smartcontractor.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,18 @@ public class CompanyServiceImpl implements CompanyService {
             throw new RuntimeException("User not found");
         }
         return companyRepository.findAll();
+    }
+
+    @Override
+    public CompanyMap updateCompany(String userId, Company company) {
+
+
+        return null;
+    }
+
+    @Override
+    public void deleteCompany(String userId, Company company) {
+
     }
 
     private String generateCompanyId() {

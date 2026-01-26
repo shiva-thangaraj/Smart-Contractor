@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User loginUser(String userEmail, String userPass) {
-        // Find user by email - returns List to handle duplicates gracefully
+        /*// Find user by email - returns List to handle duplicates gracefully
         List<User> users = userRepository.findByUserEmail(userEmail);
 
         if (!users.isEmpty()) {
@@ -65,7 +65,18 @@ public class UserServiceImpl implements UserService {
             }
             throw new RuntimeException("Password is incorrect");
         }
-        throw new RuntimeException("User not found");
+        throw new RuntimeException("User not found");*/
+
+
+        Optional<User> userOpt = userRepository.findByUserEmail(userEmail);
+
+        User user = userOpt.orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getUserPass() != null && user.getUserPass().equals(userPass)) {
+            return user;
+        }
+
+        throw new RuntimeException("Password is incorrect");
     }
 
     @Override
@@ -81,5 +92,32 @@ public class UserServiceImpl implements UserService {
     public User getUserById(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public User updateUser(User updatedUser) {
+
+        // 1. Fetch existing user
+        User existingUser = userRepository.findById(updatedUser.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<User> userWithEmail = userRepository.findByUserEmail(updatedUser.getUserEmail());
+
+        if (userWithEmail.isPresent() &&
+                !userWithEmail.get().getUserId().equals(updatedUser.getUserId())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // 2. Update allowed fields
+        existingUser.setUserName(updatedUser.getUserName());
+        existingUser.setUserEmail(updatedUser.getUserEmail());
+        existingUser.setUserPass(updatedUser.getUserPass());
+        existingUser.setIsUserActive(updatedUser.getIsUserActive());
+        // add other fields you want to allow updating
+
+        // ❌ Do NOT update userId
+
+        // 3. Save updated entity
+        return userRepository.save(existingUser);
     }
 }

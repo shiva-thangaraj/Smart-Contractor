@@ -28,10 +28,13 @@ public class UserController {
         try {
             // Check if user exists (Quick check, though service could also handle this for better atomicity)
             if (userService.getAllUsers().stream().anyMatch(u -> u.getUserEmail().equals(user.getUserEmail()))) {
-                 return new ResponseEntity<>(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "User Unable to created", "User Already exist with this email Id"), HttpStatus.BAD_REQUEST);
+                 return new ResponseEntity<>(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "User Unable to create", "User Already exist with this email Id"), HttpStatus.BAD_REQUEST);
             }
             User createdUser = userService.createUser(user);
-            return new ResponseEntity<>(ApiResponse.success(HttpStatus.CREATED.value(), "User created successfully", createdUser), HttpStatus.CREATED);
+
+            UserMap userMap = UserMapper.toLoginUserRes(createdUser);
+
+            return new ResponseEntity<>(ApiResponse.success(HttpStatus.CREATED.value(), "User created successfully", userMap), HttpStatus.CREATED);
         } catch (Exception e) {
              return new ResponseEntity<>(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error creating user", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -50,7 +53,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<?>> loginUser(@RequestBody User user) {
         try {
-
             User loggedInUser = userService.loginUser(user.getUserEmail(), user.getUserPass());
 
             UserMap userRes = UserMapper.toLoginUserRes(loggedInUser);
