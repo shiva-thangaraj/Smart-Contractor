@@ -34,7 +34,6 @@ public class UserController {
 
             UserMap userMap = UserMapper.toLoginUserRes(createdUser);
 
-
             return new ResponseEntity<>(ApiResponse.success(HttpStatus.CREATED.value(), "User created successfully", userMap), HttpStatus.CREATED);
         } catch (Exception e) {
              return new ResponseEntity<>(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error creating user", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
